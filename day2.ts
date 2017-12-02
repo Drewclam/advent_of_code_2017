@@ -66,12 +66,38 @@ console.log(checkSum(input));
 
 // For example, given the following spreadsheet:
 
-// 5 9 2 8
+// `5 9 2 8
 // 9 4 7 3
-// 3 8 6 5
+// 3 8 6 5`
 // In the first row, the only two numbers that evenly divide are 8 and 2; the result of this division is 4.
 // In the second row, the two numbers are 9 and 3; the result is 3.
 // In the third row, the result is 2.
 // In this example, the sum of the results would be 4 + 3 + 2 = 9.
 
 // What is the sum of each row's result in your puzzle input?
+
+function checkSumPart2(input: string) {
+  return convertToMatrix(input)
+    .map(row => findDivisible(row))
+    .reduce((sum, current) => {
+      return sum += current;
+    }, 0);
+}
+
+// find the evenly divisible numbers
+function findDivisible(row: number[]) {
+  for (var i = 0; i < row.length; i++) {
+    for (var j = 0; j < row.length; j++) {
+      if (i === j) { // don't calculate the same number
+        continue;
+      } else {
+        if (row[i] % row[j] === 0) {
+          return row[i] / row[j];
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+console.log(checkSumPart2(input));
