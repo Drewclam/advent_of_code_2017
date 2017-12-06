@@ -550,3 +550,114 @@ function validPhrase(input: string) {
   }
   return count;
 }
+
+// --- Part Two ---
+
+// For added security, yet another system policy has been put in place. Now, a valid passphrase must contain no two words that are anagrams of each other - that is, a passphrase is invalid if any word's letters can be rearranged to form any other word in the passphrase.
+
+// For example:
+
+// abcde fghij is a valid passphrase.
+// abcde xyz ecdab is not valid - the letters from the third word can be rearranged to form the first word.
+// a ab abc abd abf abj is a valid passphrase, because all letters need to be used when forming another word.
+// iiii oiii ooii oooi oooo is valid.
+// oiii ioii iioi iiio is not valid - any of these words can be rearranged to form any other word.
+// Under this new system policy, how many passphrases are valid?
+
+function validPhrase2(input: string) {
+  // init hash
+  let count = 0;
+  // split input into an array on \n
+  let result =  input.split('\n');
+
+  for (let i = 0; i < result.length; i++) {
+    let phrase = result[i].split(' ');
+    let hash = [];
+    for (let word = 0; word < phrase.length; word++) {
+      if (hash.indexOf(phrase[word]) !== -1) { // word exists 
+        break;
+      } else {
+        hash.push(phrase[word]);
+      }
+      if (word === phrase.length - 1) {
+        count ++;
+      }
+    }
+  }
+  return count;
+}
+
+function findAnagram(passphrase: string) {
+  const anagrams = [];
+  let phrases = passphrase.split(' ');
+
+  let recurse = (word: string[], combo) => {
+    if (word.length === 1) {
+      combo.push(word[0]);
+      anagrams.push(combo);
+      return;
+    } else {
+      for (let letter = 0; letter < word.length; letter++) {
+        let slice = word.splice(letter, 1).pop();
+        combo.push(slice);
+        recurse(word.slice(), combo.slice());
+        word.splice(letter, 0, slice);
+        combo.pop();
+      }
+    }
+  };
+
+  for (let phrase = 0; phrase < phrases.length; phrase ++) {
+    let arr = phrases[phrase].split('');
+    recurse(arr, []);
+  }
+  console.log(anagrams);
+}
+
+findAnagram('abcd');
+
+//                   i = 0                  i = 1
+// j = 0               a                      b
+// j = 1        b      c       d
+// j = 2      c   d  b   d   b   c
+// j = 3     d    c  
+
+// i = 0 abcd
+  // phrases[i] = abcd
+  // convert phrases[i] to array = [a,b,c,d]
+  // iterate over phrases[i] for j
+    // j = 0
+      // phrases[i][j] = a
+      // push phrases[i][j] to anagrams
+      // pass phrases[i].slice(j) to recursive function -> bcd
+
+// iterate over phrases[i] for j
+  // j = 0
+    // phrases[i][j] = b
+    // push b to anagrams
+    // pass phrases[i].slice(j) to recursive function -> cd
+    
+// iterate over phrases[i] for j
+  // j = 0
+    // phrases[i][j] = c
+    // push c to anagrams
+    // pass phrases[i].slice(j) to recursive function -> d
+  // j = 1
+    // phrases[i][j] = d
+    // push d to anagram
+    // pass phrases[i].slice(j) to recursive function -> c
+// return
+
+// iterate over phrases[i] for j
+  // j = 0
+    // phrases[i][j] = d
+    // push d to anagrams
+    // phrases[i] length is 1
+      // return
+
+// iterate over phrases[i] for j
+  // j = 0
+    // phrases[i][j] = c
+    // push c to anagrams
+    // phrases[i] length is 1
+      // return
