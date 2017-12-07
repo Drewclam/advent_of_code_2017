@@ -33,54 +33,41 @@ function validPhrase(input) {
 // iiii oiii ooii oooi oooo is valid.
 // oiii ioii iioi iiio is not valid - any of these words can be rearranged to form any other word.
 // Under this new system policy, how many passphrases are valid?
-function validPhrase2(input) {
-    // init hash
+function findAnagram(passphrase) {
+    var anagrams = [];
+    var phrases = passphrase.split('\n');
     var count = 0;
-    // split input into an array on \n
-    var result = input.split('\n');
-    for (var i = 0; i < result.length; i++) {
-        var phrase = result[i].split(' ');
-        var hash = [];
-        for (var word = 0; word < phrase.length; word++) {
-            if (hash.indexOf(phrase[word]) !== -1) {
-                break;
-            }
-            else {
-                hash.push(phrase[word]);
-            }
-            if (word === phrase.length - 1) {
-                count++;
-            }
+    for (var phrase = 0; phrase < phrases.length; phrase++) {
+        var line = phrases[phrase].split(' ');
+        for (var word = 0; word < line.length; word++) {
+            var arr = line[word].split('');
+            makeAnagrams(arr, [], anagrams, count);
+        }
+    }
+    console.log('result:', count);
+}
+function makeAnagrams(word, combo, anagrams, count) {
+    if (word.length === 1) {
+        combo.push(word[0]);
+        var anagram = combo.join('');
+        if (anagrams.indexOf(anagram) === -1) {
+            anagrams.push(anagram);
+            return count++;
+        }
+    }
+    else {
+        for (var letter = 0; letter < word.length; letter++) {
+            var slice = word.splice(letter, 1).pop();
+            combo.push(slice);
+            makeAnagrams(word.slice(), combo.slice(), anagrams, count);
+            word.splice(letter, 0, slice);
+            combo.pop();
         }
     }
     return count;
 }
-function findAnagram(passphrase) {
-    var anagrams = [];
-    var phrases = passphrase.split(' ');
-    var recurse = function (word, combo) {
-        if (word.length === 1) {
-            combo.push(word[0]);
-            anagrams.push(combo);
-            return;
-        }
-        else {
-            for (var letter = 0; letter < word.length; letter++) {
-                var slice = word.splice(letter, 1).pop();
-                combo.push(slice);
-                recurse(word.slice(), combo.slice());
-                word.splice(letter, 0, slice);
-                combo.pop();
-            }
-        }
-    };
-    for (var phrase = 0; phrase < phrases.length; phrase++) {
-        var arr = phrases[phrase].split('');
-        recurse(arr, []);
-    }
-    console.log(anagrams);
-}
-findAnagram('abcd');
+;
+findAnagram("abc");
 //                   i = 0                  i = 1
 // j = 0               a                      b
 // j = 1        b      c       d

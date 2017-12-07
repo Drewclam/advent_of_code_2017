@@ -564,57 +564,42 @@ function validPhrase(input: string) {
 // oiii ioii iioi iiio is not valid - any of these words can be rearranged to form any other word.
 // Under this new system policy, how many passphrases are valid?
 
-function validPhrase2(input: string) {
-  // init hash
+function findAnagram(passphrase: string) {
+  const anagrams = [];
+  let phrases = passphrase.split('\n');
   let count = 0;
-  // split input into an array on \n
-  let result =  input.split('\n');
 
-  for (let i = 0; i < result.length; i++) {
-    let phrase = result[i].split(' ');
-    let hash = [];
-    for (let word = 0; word < phrase.length; word++) {
-      if (hash.indexOf(phrase[word]) !== -1) { // word exists 
-        break;
-      } else {
-        hash.push(phrase[word]);
-      }
-      if (word === phrase.length - 1) {
-        count ++;
-      }
+  for (let phrase = 0; phrase < phrases.length; phrase ++) {
+    let line = phrases[phrase].split(' ');
+    for (let word = 0; word < line.length; word ++) {
+      let arr = line[word].split('');
+      makeAnagrams(arr, [], anagrams, count);
+    }
+  }
+  console.log('result:', count);
+}
+
+function makeAnagrams (word: string[], combo, anagrams, count) {
+  if (word.length === 1) {
+    combo.push(word[0]);
+    let anagram = combo.join('');
+    if (anagrams.indexOf(anagram) === -1) {
+      anagrams.push(anagram);
+      return count++;
+    }
+  } else {
+    for (let letter = 0; letter < word.length; letter++) {
+      let slice = word.splice(letter, 1).pop();
+      combo.push(slice);
+      makeAnagrams(word.slice(), combo.slice(), anagrams, count);
+      word.splice(letter, 0, slice);
+      combo.pop();
     }
   }
   return count;
-}
+};
 
-function findAnagram(passphrase: string) {
-  const anagrams = [];
-  let phrases = passphrase.split(' ');
-
-  let recurse = (word: string[], combo) => {
-    if (word.length === 1) {
-      combo.push(word[0]);
-      anagrams.push(combo);
-      return;
-    } else {
-      for (let letter = 0; letter < word.length; letter++) {
-        let slice = word.splice(letter, 1).pop();
-        combo.push(slice);
-        recurse(word.slice(), combo.slice());
-        word.splice(letter, 0, slice);
-        combo.pop();
-      }
-    }
-  };
-
-  for (let phrase = 0; phrase < phrases.length; phrase ++) {
-    let arr = phrases[phrase].split('');
-    recurse(arr, []);
-  }
-  console.log(anagrams);
-}
-
-findAnagram('abcd');
+findAnagram(`abc`);
 
 //                   i = 0                  i = 1
 // j = 0               a                      b
