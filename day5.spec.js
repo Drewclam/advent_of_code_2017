@@ -7,6 +7,8 @@ const testInput = `0
 -3`;
 
 const day5Input = require('./day5.input');
+const part1Answer = 351282;
+const part2Answer = 24568703;
 
 describe('Day 5 part 1', () => {
   it('should convert the input string into an array', () => {
@@ -34,7 +36,21 @@ describe('Day 5 part 1', () => {
   });
 
   it('should return the steps once the exit is reached', () => {
-    expect(day5.findExit(testInput)).toEqual(5);
-    expect(day5.findExit(day5Input)).toEqual(351282);
+    expect(day5.findExit(testInput, day5.incrementJump)).toEqual(5);
+    expect(day5.findExit(day5Input, day5.incrementJump)).toEqual(part1Answer);
+  });
+});
+
+describe('Day 5 part 2', () => {
+  it('should decrease jump by 1 if jump is 3 or more, increase by 1 otherwise', () => {
+    expect(day5.strangeJump([-2, -4, -10, 7], 0)).toEqual([-1, -4, -10, 7]);
+    expect(day5.strangeJump([0, 1, 2, 3], 0)).toEqual([1, 1, 2, 3]);
+    expect(day5.strangeJump([0, 5, 3, 6], 1)).toEqual([0, 4, 3, 6]);
+    expect(day5.strangeJump([0, 5, 3, 6], 2)).toEqual([0, 5, 2, 6]);
+  });
+
+  it('should validate test input', () => {
+    expect(day5.findExit(testInput, day5.strangeJump)).toEqual(10);
+    expect(day5.findExit(day5Input, day5.strangeJump)).toEqual(part2Answer);
   });
 });
