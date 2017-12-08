@@ -1,6 +1,4 @@
-const converter = str => {
-  return str.split('\n').map(char => Number(char));
-};
+const converter = str => str.split('\n').map(char => Number(char));
 
 const move = (arr, start) => {
   let index = start;
@@ -9,10 +7,7 @@ const move = (arr, start) => {
   return arr[result] === undefined ? null : result;
 };
 
-const incrementJump = (arr, index) => {
-  arr[index] += 1;
-  return arr;
-};
+const incrementJump = (arr, index) => (arr[index] += 1, arr);
 
 const findExit = (input, modJump) => {
   let instructions = converter(input);
@@ -29,9 +24,6 @@ const findExit = (input, modJump) => {
   return steps;
 };
 
-const strangeJump = (arr, index) => {
-  arr[index] >= 3 ? arr[index] -= 1 : arr[index] += 1;
-  return arr;
-};
+const strangeJump = (arr, index) => (arr[index] >= 3 ? arr[index] -= 1 : arr[index] += 1, arr);
 
 module.exports = { converter, move, findExit, incrementJump, strangeJump };
