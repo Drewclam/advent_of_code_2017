@@ -8,15 +8,18 @@ const parseInput = input =>
 
 const calculateFuel = mass => Math.floor(mass / 3) - 2;
 
-const fuelCounterUpper = input => {
+const fuelCounterUpper = (input, fuelCalculator) => {
   return parseInput(input).reduce((fuelRequired, mass) => {
-    fuelRequired += calculateFuel(mass);
+    fuelRequired += fuelCalculator(mass);
     return fuelRequired;
   }, 0);
 };
+
+const calculateFuelWithAdditional = mass => {};
 
 module.exports = {
   parseInput,
   calculateFuel,
   fuelCounterUpper,
+  calculateFuelWithAdditional,
 };

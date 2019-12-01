@@ -31,6 +31,20 @@ describe('Day 1', () => {
   });
 
   describe('fuelCounterUpper', () => {
-    expect(day1.fuelCounterUpper(input)).toEqual(answer);
+    expect(day1.fuelCounterUpper(input, day1.calculateFuel)).toEqual(answer);
+  });
+
+  describe('calculateFuelWithAdditional', () => {
+    it('should calculate additional fuel for mass of 14', () => {
+      expect(day1.calculateFuelWithAdditional(14)).toEqual(2);
+    });
+
+    it('should calculate additional fuel for mass of 1969', () => {
+      expect(day1.calculateFuelWithAdditional(1969)).toEqual(966);
+    });
+
+    it('should calculate additional fuel for mass of 100756', () => {
+      expect(day1.calculateFuelWithAdditional(100756)).toEqual(50346);
+    });
   });
 });
