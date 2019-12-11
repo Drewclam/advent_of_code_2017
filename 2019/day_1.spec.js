@@ -31,10 +31,21 @@ describe('Day 1', () => {
   });
 
   describe('fuelCounterUpper', () => {
-    expect(day1.fuelCounterUpper(input, day1.calculateFuel)).toEqual(answer);
+    it('should calculate part 1', () => {
+      expect(day1.fuelCounterUpper(day1.parseInput(input), day1.calculateFuel)).toEqual(answer);
+    });
+
+    it('should calculate part 2', () => {
+      expect(
+        day1.fuelCounterUpper(day1.parseInput(input), day1.calculateFuelWithAdditional),
+      ).not.toEqual(4726153);
+    });
   });
 
   describe('calculateFuelWithAdditional', () => {
+    expect(day1.calculateFuelWithAdditional(51590)).toEqual(25762);
+    expect(day1.calculateFuelWithAdditional(53619)).toEqual(26780);
+
     it('should calculate additional fuel for mass of 14', () => {
       expect(day1.calculateFuelWithAdditional(14)).toEqual(2);
     });
