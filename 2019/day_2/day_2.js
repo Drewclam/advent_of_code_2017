@@ -9,10 +9,10 @@ const runOpCode1 = (arr, pos1, pos2, pos3) =>
 const runOpCode2 = (arr, pos1, pos2, pos3) =>
   arr.map((val, i, array) => (i === pos3 ? array[pos1] * array[pos2] : val));
 
-const restoreLastState = puzzleInput =>
+const restoreLastState = (puzzleInput, noun = 12, verb = 2) =>
   puzzleInput.map((num, i) => {
-    if (i === 1) return 12;
-    if (i === 2) return 2;
+    if (i === 1) return noun;
+    if (i === 2) return verb;
     return num;
   });
 
@@ -22,9 +22,26 @@ const readIntCode = list => {
       list = runOpCode1(list, list[i + 1], list[i + 2], list[i + 3]);
     } else if (list[i] === 2) {
       list = runOpCode2(list, list[i + 1], list[i + 2], list[i + 3]);
+    } else if (list[i] === 99) {
+      break;
     }
   }
   return list;
+};
+
+const getNounAndVerb = list => {
+  const desiredOutput = 19690720;
+  let noun = 0;
+  let verb = 0;
+
+  const findNounAndVerb = (noun, verb) => {
+    let restoredList = restoreLastState(list, noun, verb);
+    let result = readIntCode(restoredList);
+
+    if (result[0] !== desiredOutput) {
+      return;
+    }
+  };
 };
 
 module.exports = { runOpCode1, runOpCode2, readIntCode, restoreLastState };
