@@ -17,11 +17,10 @@ const fuelCounterUpper = (modules, fuelCalculator) => {
 
 const calculateFuelWithAdditional = mass => {
   const fuelRequired = calculateFuel(mass);
-  const leftOverFuel = calculateFuel(fuelRequired);
-  if (leftOverFuel < 0 || leftOverFuel == 0) {
-    return fuelRequired;
+  if (fuelRequired <= 0) {
+    return 0;
   }
-  return fuelRequired + leftOverFuel + calculateFuelWithAdditional(leftOverFuel);
+  return fuelRequired + calculateFuelWithAdditional(fuelRequired);
 };
 
 module.exports = {
