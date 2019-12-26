@@ -29,19 +29,17 @@ const readIntCode = list => {
   return list;
 };
 
-const getNounAndVerb = list => {
+const findNounAndVerb = (list, noun = -1) => {
   const desiredOutput = 19690720;
-  let noun = 0;
-  let verb = 0;
+  const result = readIntCode(list);
 
-  const findNounAndVerb = (noun, verb) => {
-    let restoredList = restoreLastState(list, noun, verb);
-    let result = readIntCode(restoredList);
+  if (result[0] > desiredOutput) {
+    return 100 * (noun - 1) + Math.abs(result[0] - desiredOutput - 460800);
+  }
 
-    if (result[0] !== desiredOutput) {
-      return;
-    }
-  };
+  noun += 1;
+
+  return findNounAndVerb(restoreLastState(list, noun, 0), noun);
 };
 
-module.exports = { runOpCode1, runOpCode2, readIntCode, restoreLastState };
+module.exports = { runOpCode1, runOpCode2, readIntCode, restoreLastState, findNounAndVerb };
