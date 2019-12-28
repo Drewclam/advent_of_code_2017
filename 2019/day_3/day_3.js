@@ -2,7 +2,7 @@ const parseInput = input => input.split('\n').map(wirePaths => wirePaths.split('
 
 const calculateManhattan = ([p1, p2], [q1, q2] = [0, 0]) => Math.abs(p1 - q1) + Math.abs(p2 - q2);
 
-const getEndCoord = (coord, instruction) => {
+const getResultCoord = (coord, instruction) => {
   let [direction, ...units] = instruction;
   units = Number(units.join(''));
 
@@ -21,11 +21,16 @@ const getEndCoord = (coord, instruction) => {
 const getRanges = instructions =>
   instructions.reduce(
     (coords, instruction) => {
-      const newCoords = getEndCoord(coords[coords.length - 1], instruction);
-      coords.push(newCoords);
+      const prevCoord = coords[coords.length - 1];
+      const nextCoord = getResultCoord(prevCoord, instruction);
+      // Track steps
+      let steps = prevCoord[2];
+      steps += Math.abs(nextCoord[0] - prevCoord[0]) + Math.abs(nextCoord[1] - prevCoord[1]);
+
+      coords.push([...nextCoord, steps]);
       return coords;
     },
-    [[0, 0]],
+    [[0, 0, 0]],
   );
 
 const isWithinRange = (num, rangeMin, rangeMax) => {
@@ -36,34 +41,47 @@ const isWithinRange = (num, rangeMin, rangeMax) => {
   return false;
 };
 
+const calculateSteps = (previousCoord, intersectionCoord, prevSteps) =>
+  prevSteps +
+  Math.abs(previousCoord[0] - intersectionCoord[0]) +
+  Math.abs(previousCoord[1] - intersectionCoord[1]);
+
 const getIntersection = (range1, range2) => {
-  const [[x1, y1], [x2, y2]] = range1;
-  const [[x3, y3], [x4, y4]] = range2;
-  //       6,7
-  //        | 5,5
+  const [[x1, y1, prevSteps1], [x2, y2, nextSteps1]] = range1;
+  const [[x3, y3, prevSteps2], [x4, y4, nextSteps2]] = range2;
+  //       6,7x2
+  //        | 6,5
   // 3,5 ------- 8,5
   //        |
-  //       6,3
+  //       6,3x1
   if (
     x1 === x2 &&
     y3 === y4 &&
     isWithinRange(x1, Math.min(x3, x4), Math.max(x3, x4)) &&
     isWithinRange(y3, Math.min(y1, y2), Math.max(y1, y2))
   ) {
-    return [x1, y3];
+    const intersection = [x1, y3];
+    const totalSteps =
+      calculateSteps([x1, y1], intersection, prevSteps1) +
+      calculateSteps([x3, y3], intersection, prevSteps2);
+    return [...intersection, totalSteps];
   } else if (
     x3 === x4 &&
     y1 === y2 &&
     isWithinRange(x3, Math.min(x1, x2), Math.max(x1, x2)) &&
     isWithinRange(y1, Math.min(y3, y4), Math.max(y3, y4))
   ) {
-    return [x3, y1];
+    const intersection = [x3, y1];
+    const totalSteps =
+      calculateSteps([x1, y1], intersection, prevSteps1) +
+      calculateSteps([x3, y3], intersection, prevSteps2);
+    return [...intersection, totalSteps];
   }
 
   return null;
 };
 
-const getIntersections = (path1, path2) => {
+const getIntersections = (path1, path2, callback) => {
   let intersections = [];
   for (let i = 0; i < path1.length; i++) {
     const startCoord1 = path1[i];
@@ -89,12 +107,29 @@ const getClosestManhattanPort = (instructions1, instructions2) => {
   return Math.min(...manhattans);
 };
 
+const calculateStepsToIntersection = (instructions1, instructions2) =>
+  getIntersections(getRanges(instructions1), getRanges(instructions2)).map(
+    intersection => intersection[2],
+  );
+
+const calculateLeastSteps = (instructions1, instructions2) =>
+  calculateStepsToIntersection(instructions1, instructions2).reduce((steps, current) => {
+    if (!steps || steps > current) {
+      steps = current;
+    }
+
+    return steps;
+  });
+
 module.exports = {
   calculateManhattan,
-  getEndCoord,
+  getResultCoord,
   getIntersection,
   parseInput,
   getClosestManhattanPort,
   getRanges,
   getIntersections,
+  calculateStepsToIntersection,
+  calculateSteps,
+  calculateLeastSteps,
 };
