@@ -13,8 +13,21 @@ const parseInput = (input) =>
 
 const checkValidity = ({ letter, min, max, pw }) => {
   // fails abcoiulknc (c{2,9})
-  const regex = new RegExp(`(${letter}{${min},${max}})`);
-  return regex.test(pw);
+  const chars = pw.split('');
+  let count = 0;
+  for (let i = 0; i < chars.length; i++) {
+    if (chars[i] === letter) {
+      count++;
+    }
+    if (count > max) {
+      return false;
+    }
+  }
+  if (count >= min) {
+    return true;
+  }
+  // const regex = new RegExp(`(${letter}{${min},${max}})`);
+  // return regex.test(pw);
 };
 
 const numberOfValidPasswords = (parsedInput) =>
